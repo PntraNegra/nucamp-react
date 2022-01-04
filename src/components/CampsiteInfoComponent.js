@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { Card, CardImg, CardText, CardBody, CardTitle, Breadcrumb, BreadcrumbItem, Button, Modal, ModalHeader, ModalBody, Label} from 'reactstrap';
 import { Link } from 'react-router-dom';
 import { Control, LocalForm, Errors } from 'react-redux-form';
+import { addComment } from '../redux/ActionCreators';
 
 const required = val => val && val.length;
 const maxLength = len => val => !val || (val.length <= len);
@@ -19,7 +20,7 @@ function RenderCampsite({campsite}) {
     </div>
     );
 }
-function RenderComments({comments}) {
+function RenderComments({comments, addComment, campsiteId}) {
     if(comments) {
         return(
             <div className="col-md-5 m-1">
@@ -34,6 +35,7 @@ function RenderComments({comments}) {
                         </div>
                     );
                 })}
+                <CommentForm campsiteId={campsiteId} addComment={addComment} />
             </div>
         );
     }
@@ -56,19 +58,16 @@ class CommentForm extends Component {
         });
     }
     handleSubmit(values) {
-        console.log("Current state is: " + JSON.stringify(values));
-        alert("Current state is: " + JSON.stringify(values));
+        this.toggleModal();
+        this.props.addComment(this.props.campsiteId, values.rating, values.author, values.text);
     }
 
     render(){
         return(
-            <React.Fragment>
-                <div className="col-md-5 m-1"></div>
-                <div className="col-md-5 m-1">
-                    <Button outline onClick={this.toggleModal}><i className="fa fa-pencil fa-lg"></i> Submit Comment</Button>
-                </div>
+            <div>
+                <Button outline onClick={this.toggleModal}><i className="fa fa-pencil fa-lg"></i> Submit Comment</Button>
                 <Modal isOpen={this.state.isModalOpen} toggle={this.toggleModal}>
-                        <ModalHeader>Submit Comment</ModalHeader>
+                        <ModalHeader toggle={this.toggleModal}>Submit Comment</ModalHeader>
                             
                         <ModalBody>
                             <LocalForm onSubmit={values => this.handleSubmit(values)}>
@@ -110,7 +109,8 @@ class CommentForm extends Component {
                                 <div className="form-group">
                                     <Label htmlFor="text">Comment</Label>
                                     <Control.textarea model=".text" id="text" name="text" 
-                                        className="form-control" rows="6"
+                                        rows="6"
+                                        className="form-control"
                                         
                                     />
                                 </div>
@@ -120,7 +120,7 @@ class CommentForm extends Component {
                             </LocalForm>
                         </ModalBody>
                     </Modal>
-            </React.Fragment>
+            </div>
         )
     }
 }
@@ -143,8 +143,13 @@ function CampsiteInfo(props) {
                     
                         <RenderCampsite campsite={props.campsite} />
                     
-                        <RenderComments comments={props.comments} />
-                        <CommentForm />
+                        <RenderComments
+                            comments={props.comments}
+                            addComment={props.addComment}
+                            campsiteId={props.campsite.id}
+
+                            />
+                        
                     
                 </div>
             </div>
