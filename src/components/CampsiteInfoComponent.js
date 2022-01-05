@@ -3,6 +3,7 @@ import { Card, CardImg, CardText, CardBody, CardTitle, Breadcrumb, BreadcrumbIte
 import { Link } from 'react-router-dom';
 import { Control, LocalForm, Errors } from 'react-redux-form';
 import { addComment } from '../redux/ActionCreators';
+import { Loading } from './LoadingComponent';
 
 const required = val => val && val.length;
 const maxLength = len => val => !val || (val.length <= len);
@@ -126,7 +127,28 @@ class CommentForm extends Component {
 }
 
 function CampsiteInfo(props) {
-    if(props.campsite) {
+
+    if (props.isLoading) {
+        return (
+            <div className="container">
+                <div className="row">
+                    <Loading />
+                </div>
+            </div>
+        );
+    }
+    if (props.errMess){
+        return(
+            <div className="container">
+                <div className="row">
+                    <div className="col">
+                        <h4>{props.errMess}</h4>
+                    </div>
+                </div>
+            </div>
+        );
+    }
+    if (props.campsite){
         return (
             <div className="container">
                 <div className="row">
@@ -140,21 +162,22 @@ function CampsiteInfo(props) {
                     </div>
                 </div>
                 <div className="row">
-                    
-                        <RenderCampsite campsite={props.campsite} />
-                    
-                        <RenderComments
-                            comments={props.comments}
-                            addComment={props.addComment}
-                            campsiteId={props.campsite.id}
-
-                            />
                         
-                    
+                    <RenderCampsite campsite={props.campsite} />
+                        
+                    <RenderComments
+                        comments={props.comments}
+                        addComment={props.addComment}
+                        campsiteId={props.campsite.id}
+
+                    />
+                            
+                        
                 </div>
             </div>
-            )
+        );
     }
+
     return (
     <div></div>
     );
