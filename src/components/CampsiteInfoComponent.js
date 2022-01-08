@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { Card, CardImg, CardText, CardBody, CardTitle, Breadcrumb, BreadcrumbItem, Button, Modal, ModalHeader, ModalBody, Label} from 'reactstrap';
 import { Link } from 'react-router-dom';
 import { Control, LocalForm, Errors } from 'react-redux-form';
-import { addComment } from '../redux/ActionCreators';
+import { postComment } from '../redux/ActionCreators';
 import { Loading } from './LoadingComponent';
 import { baseUrl } from '../shared/baseUrl';
 
@@ -22,7 +22,7 @@ function RenderCampsite({campsite}) {
     </div>
     );
 }
-function RenderComments({comments, addComment, campsiteId}) {
+function RenderComments({comments, postComment, campsiteId}) {
     if(comments) {
         return(
             <div className="col-md-5 m-1">
@@ -37,7 +37,7 @@ function RenderComments({comments, addComment, campsiteId}) {
                         </div>
                     );
                 })}
-                <CommentForm campsiteId={campsiteId} addComment={addComment} />
+                <CommentForm campsiteId={campsiteId} postComment={postComment} />
             </div>
         );
     }
@@ -61,7 +61,7 @@ class CommentForm extends Component {
     }
     handleSubmit(values) {
         this.toggleModal();
-        this.props.addComment(this.props.campsiteId, values.rating, values.author, values.text);
+        this.props.postComment(this.props.campsiteId, values.rating, values.author, values.text);
     }
 
     render(){
@@ -168,7 +168,7 @@ function CampsiteInfo(props) {
                         
                     <RenderComments
                         comments={props.comments}
-                        addComment={props.addComment}
+                        postComment={props.postComment}
                         campsiteId={props.campsite.id}
 
                     />
